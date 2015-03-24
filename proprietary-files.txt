@@ -1,0 +1,24 @@
+# Camera autofocus
+vendor/lib/libactuator_dw9714a.so
+vendor/lib/libactuator_dw9714a_camcorder.so
+vendor/lib/libactuator_dw9714a_camera.so
+
+# Camera chromatix
+vendor/lib/libchromatix_imx135_common.so
+vendor/lib/libchromatix_imx135_default_video.so
+vendor/lib/libchromatix_imx135_hfr_120.so
+vendor/lib/libchromatix_imx135_hfr_60.so
+vendor/lib/libchromatix_imx135_hfr_90.so
+vendor/lib/libchromatix_imx135_preview.so
+vendor/lib/libchromatix_imx135_snapshot.so
+vendor/lib/libchromatix_imx135_video_hd.so
+vendor/lib/libchromatix_ov5648_ofilm_common.so
+vendor/lib/libchromatix_ov5648_ofilm_default_video.so
+vendor/lib/libchromatix_ov5648_ofilm_liveshot.so
+vendor/lib/libchromatix_ov5648_ofilm_preview.so
+vendor/lib/libchromatix_ov5648_ofilm_snapshot.so
+vendor/lib/libchromatix_ov5648_qtech_common.so
+vendor/lib/libchromatix_ov5648_qtech_default_video.so
+vendor/lib/libchromatix_ov5648_qtech_liveshot.so
+vendor/lib/libchromatix_ov5648_qtech_preview.so
+vendor/lib/libchromatix_ov5648_qtech_snapshot.so

@@ -1,0 +1,135 @@
+on init
+    write /sys/class/android_usb/android0/f_rndis/wceis 1
+
+on charger
+    setprop sys.usb.config mass_storage
+
+on fs
+    mkdir /dev/usb-ffs 0770 shell shell
+    mkdir /dev/usb-ffs/adb 0770 shell shell
+    mount functionfs adb /dev/usb-ffs/adb uid=2000,gid=2000
+    write /sys/class/android_usb/android0/f_ffs/aliases adb
+
+on post-fs-data
+    chown system system /sys/class/android_usb/android0/f_mass_storage/lun/file
+    chmod 0660 /sys/class/android_usb/android0/f_mass_storage/lun/file
+    chown system system /sys/class/android_usb/android0/f_rndis/ethaddr
+    chmod 0660 /sys/class/android_usb/android0/f_rndis/ethaddr
+
+# Used to disable USB when switching states
+on property:sys.usb.config=none
+    stop adbd
+    write /sys/class/android_usb/android0/enable 0
+    write /sys/class/android_usb/android0/bDeviceClass 0
+    setprop sys.usb.state ${sys.usb.config}
+
+# adb only USB configuration
+# This should only be used during device bringup
+# and as a fallback if the USB manager fails to set a standard configuration
+on property:sys.usb.config=adb
+    write /sys/class/android_usb/android0/f_ffs/on 1
+    start adbd
+    write /sys/class/android_usb/android0/f_adb/on 1
+    setprop sys.usb.state ${sys.usb.config}
+
+on property:sys.usb.config=adboff
+    stop adbd
+    write /sys/class/android_usb/android0/f_adb/on 0
+    write /sys/class/android_usb/android0/f_ffs/on 0
+    setprop sys.usb.state ${sys.usb.config}
+
+on property:sys.usb.config=mass_storage,adb
+    start adbd
+    write /sys/devices/platform/android_usb/usb_function_switch 3
+    setprop sys.usb.state ${sys.usb.config}
+
+on property:sys.usb.config=mass_storage
+    write /sys/devices/platform/android_usb/usb_function_switch 1
+    setprop sys.usb.state ${sys.usb.config}
+
+on property:sys.usb.config=mtp
+#    write /sys/class/android_usb/android0/enable 0
+#    write /sys/class/android_usb/android0/idVendor 0bb4
+#    write /sys/class/android_usb/android0/idProduct 0c93
+#    write /sys/class/android_usb/android0/functions ${sys.usb.config}
+#    write /sys/class/android_usb/android0/enable 1
+    write /sys/devices/platform/android_usb/usb_function_switch 128
+    setprop sys.usb.state ${sys.usb.config}
+
+on property:sys.usb.config=mtp,adb
+#    write /sys/class/android_usb/android0/enable 0
+#    write /sys/class/android_usb/android0/idVendor 0bb4
+#    write /sys/class/android_usb/android0/idProduct 0c93
+#    write /sys/class/android_usb/android0/functions ${sys.usb.config}
+#    write /sys/class/android_usb/android0/enable 1
+    start adbd
+    write /sys/devices/platform/android_usb/usb_function_switch 130
+    setprop sys.usb.state ${sys.usb.config}
+
+on property:sys.usb.config=mtp,mass_storage,adb
+    start adbd
+    write /sys/devices/platform/android_usb/usb_function_switch 131
+    setprop sys.usb.state ${sys.usb.config}
+
+on property:sys.usb.config=mtp,adb,mass_storage
+    start adbd
+    write /sys/devices/platform/android_usb/usb_function_switch 131
+    setprop sys.usb.state ${sys.usb.config}
+
+#without adb
+on property:sys.usb.config=mtp,mass_storage
+    write /sys/devices/platform/android_usb/usb_function_switch 129
+    setprop sys.usb.state ${sys.usb.config}
+
+## ============
+#used for ##3424
+on property:persist.sys.usb.diag.config=*
+    setprop sys.usb.diag.config ${persist.sys.usb.diag.config}
+
+on property:sys.usb.diag.config=diagon
+    write /sys/class/android_usb/android0/f_diag/on 1
+    setprop sys.usb.diag.state ${sys.usb.diag.config}
+
+on property:sys.usb.diag.config=diagoff
+    write /sys/class/android_usb/android0/f_diag/on 0
+    setprop sys.usb.diag.state ${sys.usb.diag.config}
+
+on property:sys.usb.config=adb,diag,modem,rmnet
+    start adbd
+    write /sys/devices/platform/android_usb/usb_function_switch 4362
+    setprop sys.usb.state ${sys.usb.config}
+
+on property:sys.usb.config=diag,modem,rmnet,adb
+    start adbd
+    write /sys/devices/platform/android_usb/usb_function_switch 4362
+    setprop sys.usb.state ${sys.usb.config}
+
+#`` HTC_IPT
+# for USB IPT
+service udhcpd /system/bin/logwrapper /system/bin/udhcpd
+	disabled
+	oneshot
+
+service netsharing_on /system/bin/netsharing net on
+	disabled
+	oneshot
+
+service netsharing_off /system/bin/netsharing net off
+	disabled
+	oneshot
+
+service netsharing_pass /system/bin/netsharing net_pass on
+	disabled
+	oneshot
+
+on property:sys.usb.projector.enable=1
+    write /sys/class/android_usb/f_projector/on 1
+
+on property:sys.usb.projector.enable=0
+    write /sys/class/android_usb/f_projector/on 0
+
+on property:bugreport.debug=1
+    write /sys/class/android_usb/android0/bugreport_debug 1
+
+on property:bugreport.debug=0
+    write /sys/class/android_usb/android0/bugreport_debug 0
